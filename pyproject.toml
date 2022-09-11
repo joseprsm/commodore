@@ -6,6 +6,9 @@ authors = ["José Medeiros <joseprsm@gmail.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.10"
+fastapi = "^0.83.0"
+google-cloud-firestore = "^2.6.1"
+uvicorn = "^0.18.3"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
