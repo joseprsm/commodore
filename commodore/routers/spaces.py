@@ -1,8 +1,5 @@
-import json
-
 from fastapi import APIRouter
 
-from commodore import db
 from commodore.models import Space
 
 
@@ -11,34 +8,25 @@ router = APIRouter()
 
 @router.get("/spaces")
 async def get_spaces():
-    documents = db.get()
-    return {"spaces": [doc.to_dict() for doc in documents]}
+    return {"spaces": Space.get_all()}
 
 
 @router.post("/spaces")
 async def create_space(space: Space):
-    space = json.loads(space.json())
-    db.document(parse_name(space["name"])).set(space)
-    return space
+    return space.create()
 
 
 @router.get("/{space}")
 async def get_space(space):
-    return db.document(space).get().to_dict()
+    return Space.get(space)
 
 
 @router.put("/{space}")
 async def update_space(space, update: dict):
-    doc = db.document(space)
-    doc.update(update)
-    return doc.get().to_dict()
+    return Space.update(space, update)
 
 
 @router.delete("/{space}")
 async def delete_space(space):
-    db.document(space).delete()
+    Space.delete(space)
     return {"msg": f"Space {space} deleted"}
-
-
-def parse_name(name: str):
-    return name.replace(" ", "").lower()
