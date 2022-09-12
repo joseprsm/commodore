@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from commodore.models import Subscription
+from commodore.models.subscription import Subscription
 
 
 router = APIRouter()
