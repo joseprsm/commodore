@@ -31,8 +31,6 @@ class User(BaseModel, IdentifiableMixin):
     def delete(cls, space: str, user_id: int):
         cls.id_exists(space, user_id)
         cls.get_document(space, user_id).delete()
-        n_users = cls.cardinality(space)
-        cls._get_space_document(space).update({"n_users": n_users - 1})
 
     @classmethod
     def get_all(cls, space: str, name: str = None):

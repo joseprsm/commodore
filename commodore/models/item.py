@@ -33,8 +33,6 @@ class Item(BaseModel, IdentifiableMixin):
     def delete(cls, space: str, item_id: str | int):
         cls.id_exists(space, item_id)
         cls.get_document(space, item_id).delete()
-        n_items = cls.cardinality(space) - 1
-        cls._get_space_document(space).update({"n_items": n_items})
 
     @classmethod
     def get_all(
