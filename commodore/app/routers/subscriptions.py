@@ -34,3 +34,9 @@ async def create_subscription(space: str, sub: Subscription):
         {"subscription": sub_doc.id}
     )
     return s
+
+
+@router.get("/{space}/subscriptions")
+def get_subscriptions(space: str):
+    documents = db.document(space).collection("subscriptions").get()
+    return {"subscriptions": [doc.to_dict() for doc in documents]}
