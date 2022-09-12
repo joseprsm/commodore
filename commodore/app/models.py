@@ -32,3 +32,4 @@ class Subscription(BaseModel):
     item_id: int
     start_date: datetime = datetime.now()
     end_date: datetime | None
+    active: bool = True
