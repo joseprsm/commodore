@@ -20,5 +20,8 @@ async def create_subscription(space: str, sub: Subscription):
         raise ValueError('`user_id` does not exist')
 
     s['entrances'] = db.document(space).collection('items').document(str(s['item_id'])).get().to_dict()['entrances']
-    db.document(space).collection("subscriptions").document().set(s)
+    sub_doc = db.document(space).collection("subscriptions").document()
+    sub_doc.set(s)
+
+    db.document(space).collection("users").document(str(s['user_id'])).update({"subscription": sub_doc.id})
     return s

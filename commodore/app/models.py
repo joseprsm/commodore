@@ -23,6 +23,7 @@ class User(BaseModel):
 
     name: str
     email: str
+    subscription: str | None
 
 
 class Subscription(BaseModel):
