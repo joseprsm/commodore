@@ -6,6 +6,7 @@ from commodore.app import db
 from commodore.app.models import Item
 from commodore.app.utils import get_n_items
 
+
 router = APIRouter()
 
 
@@ -13,7 +14,7 @@ router = APIRouter()
 async def create_item(space: str, item: Item):
     it = json.loads(item.json())
     item_id = get_n_items(space) + 1
-    db.document(space).collection('items').document(str(item_id)).set(it)
+    db.document(space).collection("items").document(str(item_id)).set(it)
     db.document(space).update({"n_items": item_id})
     return it
 
@@ -26,7 +27,7 @@ async def get_items(
     max_price: float = None,
     recurring: bool = None,
 ):
-    col_ref = db.document(space).collection('items')
+    col_ref = db.document(space).collection("items")
 
     col = col_ref.where("name", "==", name) if name else col_ref
     col = col.where("price", ">=", min_price) if min_price else col

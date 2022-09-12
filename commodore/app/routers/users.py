@@ -6,6 +6,7 @@ from commodore.app import db
 from commodore.app.models import User
 from commodore.app.utils import get_n_users
 
+
 router = APIRouter()
 
 

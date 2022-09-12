@@ -11,7 +11,15 @@ def get_n_items(space):
 
 def id_exists(space: str, collection_id: str):
     def check(value: str | int):
-        return db.document(space).collection(collection_id).document(str(value)).get().to_dict() is not None
+        return (
+            db.document(space)
+            .collection(collection_id)
+            .document(str(value))
+            .get()
+            .to_dict()
+            is not None
+        )
+
     return check
 
 
