@@ -4,8 +4,7 @@ from fastapi import APIRouter
 
 from commodore.app import db
 from commodore.app.models import Item
-from commodore.app.utils import get_n_items
-
+from commodore.app.utils import get_n_items, id_exists
 
 router = APIRouter()
 
@@ -36,3 +35,29 @@ async def get_items(
 
     documents = col.get()
     return {"items": [doc.to_dict() for doc in documents]}
+
+
+@router.get("/{space}/items/{item_id}")
+async def get_item(space: str, item_id: int):
+    if not id_exists(space, "items")(str(item_id)):
+        raise ValueError("`item_id` does not exist")
+    return db.document(space).collection("items").document(str(item_id)).get().to_dict()
+
+
+@router.put("/{space}/items/{item_id}")
+async def update_item(space: str, item_id: int, update: dict):
+    if not id_exists(space, "items")(str(item_id)):
+        raise ValueError("`item_id` does not exist")
+    doc = db.document(space).collection("items").document(str(item_id))
+    doc.update(update)
+    return doc.get().to_dict()
+
+
+@router.delete("/{space}/items/{item_id}")
+async def delete_item(space: str, item_id: int):
+    if not id_exists(space, "items")(str(item_id)):
+        raise ValueError("`item_id` does not exist")
+    db.document(space).collection("items").document(str(item_id)).delete()
+    n_items = get_n_items(space)
+    db.document(space).update({"n_items": n_items - 1})
+    return {"msg": f"item {item_id} deleted"}
