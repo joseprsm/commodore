@@ -2,9 +2,9 @@ import json
 
 from fastapi import APIRouter
 
-from commodore.app.base import db
+from commodore.app.db import db
 from commodore.app.models import Item
-
+from commodore.app.utils import get_n_items
 
 router = APIRouter()
 col_ref = db.collection("items")
@@ -13,7 +13,9 @@ col_ref = db.collection("items")
 @router.post("/items")
 async def create_item(item: Item):
     it = json.loads(item.json())
-    col_ref.document().set(it)
+    item_id = get_n_items() + 1
+    col_ref.document(str(item_id)).set(it)
+    db.update({"n_items": item_id})
     return it
 
 

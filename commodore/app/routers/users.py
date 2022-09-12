@@ -2,9 +2,9 @@ import json
 
 from fastapi import APIRouter
 
-from commodore.app.base import db
+from commodore.app.db import db
 from commodore.app.models import User
-
+from commodore.app.utils import get_n_users
 
 router = APIRouter()
 col_ref = db.collection("users")
@@ -24,5 +24,7 @@ async def get_users(name: str = None):
 @router.post("/users")
 async def create_user(user: User):
     u = json.loads(user.json())
-    col_ref.document().set(u)
+    user_id = get_n_users() + 1
+    col_ref.document(str(user_id)).set(u)
+    db.update({"n_users": user_id})
     return u
