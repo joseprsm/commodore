@@ -4,8 +4,7 @@ from fastapi import APIRouter
 
 from commodore.app import db
 from commodore.app.models import User
-from commodore.app.utils import get_n_users
-
+from commodore.app.utils import get_n_users, id_exists
 
 router = APIRouter()
 
@@ -25,3 +24,29 @@ async def create_user(space: str, user: User):
     db.document(space).collection("users").document(str(user_id)).set(u)
     db.document(space).update({"n_users": user_id})
     return u
+
+
+@router.put("/{space}/users/{user_id}")
+async def update_user(space: str, user_id: int, update: dict):
+    if not id_exists(space, 'users')(str(user_id)):
+        raise ValueError('`user_id` does not exist')
+    doc = db.document(space).collection('users').document(str(user_id))
+    doc.update(update)
+    return doc.get().to_dict()
+
+
+@router.delete("/{space}/users/{user_id}")
+async def delete_user(space: str, user_id: int):
+    if not id_exists(space, 'users')(str(user_id)):
+        raise ValueError('`user_id` does not exist')
+    db.document(space).collection('users').document(str(user_id)).delete()
+    n_users = get_n_users(space)
+    db.document(space).update({"n_users": n_users - 1})
+    return {"msg": f"user {user_id} deleted"}
+
+
+@router.get("/{space}/users/{user_id}")
+async def get_user(space: str, user_id: int):
+    if not id_exists(space, 'users')(str(user_id)):
+        raise ValueError('`user_id` does not exist')
+    return db.document(space).collection('users').document(str(user_id)).get().to_dict()
