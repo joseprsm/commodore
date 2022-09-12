@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-from commodore.app.routers import items, spaces, subscriptions, users
+from commodore.routers import items, spaces, subscriptions, users
 
 
 app = FastAPI()

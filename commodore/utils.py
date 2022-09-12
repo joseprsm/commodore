@@ -1,4 +1,4 @@
-from commodore.app import db
+from commodore import db
 
 
 def get_n_users(space):

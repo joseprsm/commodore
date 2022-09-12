@@ -2,9 +2,9 @@ import json
 
 from fastapi import APIRouter
 
-from commodore.app import db
-from commodore.app.models import User
-from commodore.app.utils import get_n_users, id_exists
+from commodore import db
+from commodore.models import User
+from commodore.utils import get_n_users, id_exists
 
 router = APIRouter()
 

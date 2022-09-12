@@ -2,8 +2,8 @@ import json
 
 from fastapi import APIRouter
 
-from commodore.app import db
-from commodore.app.models import Space
+from commodore import db
+from commodore.models import Space
 
 
 router = APIRouter()
