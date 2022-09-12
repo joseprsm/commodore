@@ -9,8 +9,10 @@ def get_n_items(space):
     return db.document(space).get().to_dict()["n_items"]
 
 
-def id_exists(collection_id: str, value: str | int):
-    return db.collection(collection_id).document(str(value)).get().to_dict() is not None
+def id_exists(space: str, collection_id: str):
+    def check(value: str | int):
+        return db.document(space).collection(collection_id).document(str(value)).get().to_dict() is not None
+    return check
 
 
 def get_entrance_passes():
