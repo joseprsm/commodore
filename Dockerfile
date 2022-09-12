@@ -6,4 +6,4 @@ COPY commodore commodore
 
 RUN pip install .
 
-ENTRYPOINT ["uvicorn", "commodore.app.main:app", "--reload"]
+ENTRYPOINT ["uvicorn", "commodore.app:app", "--reload"]
