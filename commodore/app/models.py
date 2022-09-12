@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from pydantic import BaseModel
 
 
@@ -14,9 +16,18 @@ class Item(BaseModel):
     description: str | None
     price: float
     recurring: bool | None
+    entrances: int | None
 
 
 class User(BaseModel):
 
     name: str
     email: str
+
+
+class Subscription(BaseModel):
+
+    user_id: int
+    item_id: int
+    start_date: datetime = datetime.now()
+    end_date: datetime | None
