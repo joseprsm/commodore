@@ -3,36 +3,45 @@ from pydantic import BaseModel
 from commodore.models.base import IdentifiableMixin
 
 
+class PlanItems(BaseModel):
+
+    name: str
+    units: int
+
+
 class Plan(BaseModel, IdentifiableMixin):
 
     name: str
     price: float
     description: str | None
     recurring: bool | None
-    entrances: int | None
+    uses: int | None
+    items: list[PlanItems] | None
 
     def create(self, space):
         plan_id = self.cardinality(space) + 1
-        self.get_document(space, plan_id).set(self.__dict__)
+        doc = self.__dict__
+        doc["items"] = [it.__dict__ for it in self.items]
+        self._get_document(space, plan_id).set(doc)
         self._get_space_document(space).update({"n_plans": plan_id})
         return self
 
     @classmethod
     def get(cls, space: str, plan_id: str | int):
         cls.id_exists(space, plan_id)
-        return Plan(**cls.get_document(space, plan_id).get().to_dict())
+        return Plan(**cls._get_document(space, plan_id).get().to_dict())
 
     @classmethod
     def update(cls, space: str, plan_id: str | int, update: dict):
         cls.id_exists(space, plan_id)
-        doc = cls.get_document(space, plan_id)
+        doc = cls._get_document(space, plan_id)
         doc.update(update)
         return Plan(**doc.get().to_dict())
 
     @classmethod
     def delete(cls, space: str, plan_id: str | int):
         cls.id_exists(space, plan_id)
-        cls.get_document(space, plan_id).delete()
+        cls._get_document(space, plan_id).delete()
 
     @classmethod
     def list(
