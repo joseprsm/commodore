@@ -2,18 +2,37 @@ from datetime import datetime
 
 from pydantic import BaseModel
 
+from commodore.models import User
 from commodore.models.base import SpaceResource
+from commodore.models.subscription import Subscription
 
 
 class Booking(BaseModel, SpaceResource):
 
     user_id: int
     item_category: str
-    item_id: int
+    item_id: int | None
     start: datetime = datetime.now()
     end: datetime | None
 
     def create(self, space: str):
+        sub_id = User.get(space, self.user_id).subscription
+        sub = Subscription.get(space, sub_id)
+
+        if self.item_category not in [it.name for it in sub.plan.items]:
+            raise ValueError("Item category not in user plan")
+
+        for it in sub.plan.items:
+            if it.name == self.item_category:
+                if it.units == 0:
+                    raise ValueError("Plan has no more units for this item category")
+                it.units -= 1
+
+        update_sub = dict()
+        update_sub["plan"] = sub.plan.__dict__
+        update_sub["plan"]["items"] = [it.__dict__ for it in sub.plan.items]
+        Subscription.update(space, sub_id, update_sub)
+
         self._get_document(space).set(self.__dict__)
         return self
 

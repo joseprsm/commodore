@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from commodore.models import Booking
+from commodore.models.booking import Booking
 
 
 router = APIRouter()

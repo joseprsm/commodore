@@ -9,27 +9,25 @@ from commodore.models.base import SpaceResource
 class Subscription(BaseModel, SpaceResource):
 
     user_id: int
-    plan_id: int
+    plan_id: int | None
     start_date: datetime = datetime.now()
     end_date: datetime | None
     active: bool = True
-    entrances: int | None
+    plan: Plan | None
 
     def create(self, space: str):
         User.id_exists(space, self.user_id)
+
+        if self.plan_id is None:
+            raise ValueError("Missing plan ID")
         Plan.id_exists(space, self.plan_id)
 
-        self.entrances = (
-            self.entrances
-            if self.entrances
-            else self._get_space_document(space)
-            .collection("plans")
-            .document(str(self.plan_id))
-            .get()
-            .to_dict()["entrances"]
-        )
-
         doc = self._get_document(space)
+        data = self.__dict__
+        data["plan"] = Plan.get(space, self.plan_id).__dict__
+        data["plan"]["items"] = [it.__dict__ for it in data["plan"]["items"]]
+        data["plan"]["id"] = data.pop("plan_id")
+
         doc.set(self.__dict__)
         User._get_document(space, self.user_id).update({"subscription": doc.id})
         return self
@@ -41,11 +39,15 @@ class Subscription(BaseModel, SpaceResource):
             return Subscription(**doc)
         raise ValueError(f"Subscription {id_} not found!")
 
-    def update(self, **kwargs):
-        pass
+    @classmethod
+    def update(cls, space: str, id_: str, update: dict):
+        doc = cls._get_document(space, id_)
+        doc.update(update)
+        return Subscription(**doc.get().to_dict())
 
-    def delete(self, **kwargs):
-        pass
+    @classmethod
+    def delete(cls, space: str, id_: str):
+        cls._get_document(space, id_).delete()
 
     @classmethod
     def list(cls, space: str):
