@@ -10,16 +10,19 @@ class BaseInterface:
     def create(self, **kwargs):
         pass
 
+    @classmethod
     @abstractmethod
-    def get(self, **kwargs):
+    def get(cls, **kwargs):
         pass
 
+    @classmethod
     @abstractmethod
-    def update(self, **kwargs):
+    def update(cls, **kwargs):
         pass
 
+    @classmethod
     @abstractmethod
-    def delete(self, **kwargs):
+    def delete(cls, **kwargs):
         pass
 
     @classmethod
