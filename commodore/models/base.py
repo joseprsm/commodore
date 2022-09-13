@@ -24,7 +24,7 @@ class BaseInterface:
 
     @classmethod
     @abstractmethod
-    def get_all(cls, **kwargs):
+    def list(cls, **kwargs):
         pass
 
 

@@ -14,7 +14,7 @@ async def create_subscription(space: str, sub: Subscription):
 
 @router.get("/{space}/subscriptions")
 def get_subscriptions(space: str):
-    return {"subscriptions": Subscription.get_all(space)}
+    return {"subscriptions": Subscription.list(space)}
 
 
 @router.get("/{space}/subscriptions/{sub_id}")

@@ -8,7 +8,7 @@ router = APIRouter()
 
 @router.get("/spaces")
 async def get_spaces():
-    return {"spaces": Space.get_all()}
+    return {"spaces": Space.list()}
 
 
 @router.post("/spaces")

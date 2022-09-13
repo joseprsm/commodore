@@ -33,7 +33,7 @@ class User(BaseModel, IdentifiableMixin):
         cls.get_document(space, user_id).delete()
 
     @classmethod
-    def get_all(cls, space: str, name: str = None):
+    def list(cls, space: str, name: str = None):
         col = cls._get_collection(space)
         col = col.where("name", "==", name) if name else col
         return [User(**doc.to_dict()) for doc in col.get()]

@@ -2,14 +2,14 @@ from datetime import datetime
 
 from pydantic import BaseModel
 
-from commodore.models import Item, User
+from commodore.models import Plan, User
 from commodore.models.base import SpaceResource
 
 
 class Subscription(BaseModel, SpaceResource):
 
     user_id: int
-    item_id: int
+    plan_id: int
     start_date: datetime = datetime.now()
     end_date: datetime | None
     active: bool = True
@@ -17,14 +17,14 @@ class Subscription(BaseModel, SpaceResource):
 
     def create(self, space: str):
         User.id_exists(space, self.user_id)
-        Item.id_exists(space, self.item_id)
+        Plan.id_exists(space, self.plan_id)
 
         self.entrances = (
             self.entrances
             if self.entrances
             else self._get_space_document(space)
-            .collection("items")
-            .document(str(self.item_id))
+            .collection("plans")
+            .document(str(self.plan_id))
             .get()
             .to_dict()["entrances"]
         )
@@ -48,7 +48,7 @@ class Subscription(BaseModel, SpaceResource):
         pass
 
     @classmethod
-    def get_all(cls, space: str):
+    def list(cls, space: str):
         docs = cls._get_collection(space).get()
         return [Subscription(**doc.to_dict()) for doc in docs]
 

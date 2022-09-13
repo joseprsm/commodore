@@ -5,8 +5,8 @@ def get_n_users(space):
     return db.document(space).get().to_dict()["n_users"]
 
 
-def get_n_items(space):
-    return db.document(space).get().to_dict()["n_items"]
+def get_n_plans(space):
+    return db.document(space).get().to_dict()["n_plans"]
 
 
 def id_exists(space: str, collection_id: str):
@@ -26,5 +26,5 @@ def id_exists(space: str, collection_id: str):
 def get_entrance_passes():
     return [
         doc.id
-        for doc in db.collection("items").where("recurring", "!=", "true").stream()
+        for doc in db.collection("plans").where("recurring", "!=", "true").stream()
     ]

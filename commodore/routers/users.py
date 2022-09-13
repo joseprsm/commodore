@@ -8,7 +8,7 @@ router = APIRouter()
 
 @router.get("/{space}/users")
 async def get_users(space: str, name: str = None):
-    return {"users": User.get_all(space, name)}
+    return {"users": User.list(space, name)}
 
 
 @router.post("/{space}/users")
