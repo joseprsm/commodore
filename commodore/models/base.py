@@ -27,6 +27,11 @@ class BaseInterface:
     def list(cls, **kwargs):
         pass
 
+    @classmethod
+    @abstractmethod
+    def _get_document(cls, **kwargs):
+        pass
+
 
 class SpaceResource(BaseInterface, ABC):
     @staticmethod
@@ -39,7 +44,7 @@ class SpaceResource(BaseInterface, ABC):
         return cls._get_space_document(space).collection(collection_id)
 
     @classmethod
-    def get_document(cls, space: str, id_: str | int | None = None, **kwargs):
+    def _get_document(cls, space: str, id_: str | int | None = None, **kwargs):
         col = cls._get_collection(space)
         doc = col.document(str(id_)) if id_ else col.document()
         return doc
@@ -57,18 +62,6 @@ class IdentifiableMixin(SpaceResource, ABC):
 
     @classmethod
     def id_exists(cls, space: str, value: str | int):
-        if (
-            db.document(space)
-            .collection(cls._get_collection_id())
-            .document(str(value))
-            .get()
-            .to_dict()
-            is None
-        ):
+        if cls._get_document(space, value).get().to_dict() is None:
             raise ValueError(f"ID {value} does not exist")
         return True
-
-    @staticmethod
-    @abstractmethod
-    def _get_collection_id() -> str:
-        pass

@@ -29,14 +29,14 @@ class Subscription(BaseModel, SpaceResource):
             .to_dict()["entrances"]
         )
 
-        doc = self.get_document(space)
+        doc = self._get_document(space)
         doc.set(self.__dict__)
-        User.get_document(space, self.user_id).update({"subscription": doc.id})
+        User._get_document(space, self.user_id).update({"subscription": doc.id})
         return self
 
     @classmethod
     def get(cls, space: str, id_: str):
-        doc = cls.get_document(space, id_).get().to_dict()
+        doc = cls._get_document(space, id_).get().to_dict()
         if doc:
             return Subscription(**doc)
         raise ValueError(f"Subscription {id_} not found!")
