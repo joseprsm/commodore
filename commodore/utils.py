@@ -28,3 +28,7 @@ def get_entrance_passes():
         doc.id
         for doc in db.collection("plans").where("recurring", "!=", "true").stream()
     ]
+
+
+def parse_name(name: str, sep: str = ""):
+    return name.replace(" ", sep).lower()

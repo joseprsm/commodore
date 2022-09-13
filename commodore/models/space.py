@@ -2,6 +2,7 @@ from pydantic import BaseModel
 
 from commodore import db
 from commodore.models.base import BaseInterface
+from commodore.utils import parse_name
 
 
 class Space(BaseModel, BaseInterface):
@@ -12,7 +13,7 @@ class Space(BaseModel, BaseInterface):
     n_plans: int = 0
 
     def create(self):
-        self._get_document(self._parse_name(self.name)).set(self.__dict__)
+        self._get_document(parse_name(self.name)).set(self.__dict__)
         return self
 
     @classmethod
@@ -32,10 +33,6 @@ class Space(BaseModel, BaseInterface):
     @classmethod
     def list(cls, **kwargs):
         return [Space(**doc.to_dict()) for doc in db.get()]
-
-    @staticmethod
-    def _parse_name(name: str):
-        return name.replace(" ", "").lower()
 
     @classmethod
     def _get_document(cls, name: str):
